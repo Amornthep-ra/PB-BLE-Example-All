@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คู่มือ PB-BLE NKP_ONE</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface2:#eef1f5; --text:#1b2330; --muted:#5b6676;
+  --line:#dde2e9; --accent:#1f6feb; --accent-soft:#e3eeff; --ok:#1a7f37; --ok-soft:#e5f5ea;
+  --warn:#9a6700; --warn-soft:#fff6d9; --bad:#c62828; --bad-soft:#fdecec;
+  --code-bg:#0f1720; --code-text:#e6edf3; --code-key:#7ee787; --code-str:#a5d6ff; --code-com:#8b949e; --code-num:#ffa657;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --surface:#161b22; --surface2:#1f2630; --text:#e6edf3; --muted:#9aa5b1;
+    --line:#2d3540; --accent:#58a6ff; --accent-soft:#132a4a; --ok:#3fb950; --ok-soft:#12291a;
+    --warn:#d29922; --warn-soft:#2b2311; --bad:#f85149; --bad-soft:#341617;
+    --code-bg:#0a0e14;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --surface:#161b22; --surface2:#1f2630; --text:#e6edf3; --muted:#9aa5b1;
+  --line:#2d3540; --accent:#58a6ff; --accent-soft:#132a4a; --ok:#3fb950; --ok-soft:#12291a;
+  --warn:#d29922; --warn-soft:#2b2311; --bad:#f85149; --bad-soft:#341617;
+  --code-bg:#0a0e14;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Leelawadee UI","Sarabun","Noto Sans Thai","Tahoma",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.7}
+code,pre,kbd{font-family:"Cascadia Code",Consolas,"SF Mono",Menlo,monospace}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+header.hero{background:linear-gradient(135deg,#1f6feb,#0b3d91);color:#fff;padding:40px 0 32px}
+header.hero h1{margin:0 0 6px;font-size:clamp(26px,5vw,38px);line-height:1.25}
+header.hero p{margin:0;opacity:.9;max-width:680px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.hero-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.hbtn{display:inline-block;padding:8px 16px;border-radius:10px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1px solid rgba(255,255,255,.4)}
+.hbtn:hover{background:rgba(255,255,255,.12)}
+.hbtn.primary{background:#fff;color:#0b3d91;border-color:#fff}
+.hbtn.primary:hover{background:#e8efff}
+.linkbox .dl{display:inline-block;margin:10px 0 6px;padding:10px 20px;border-radius:10px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700}
+.chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:3px 12px;font-size:14px}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:32px;padding:28px 16px 64px}
+nav.toc{position:sticky;top:16px;align-self:start;font-size:14px}
+nav.toc b{display:block;color:var(--muted);font-weight:600;margin-bottom:6px;font-size:13px;letter-spacing:.03em}
+nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:t}
+nav.toc li{counter-increment:t}
+nav.toc a{display:block;padding:5px 10px;border-radius:8px;color:var(--text);text-decoration:none}
+nav.toc a::before{content:counter(t) ". ";color:var(--muted)}
+nav.toc a:hover{background:var(--surface2)}
+main{min-width:0}
+section.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin-bottom:20px;scroll-margin-top:16px}
+section.step h2{display:flex;align-items:center;gap:12px;margin:0 0 12px;font-size:22px;line-height:1.3}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:16px;font-weight:700}
+h3{font-size:17px;margin:20px 0 8px}
+ol.steps{padding-left:22px;margin:8px 0}
+ol.steps li{margin:6px 0}
+.menu{display:inline-block;background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:0 7px;font-size:14px;font-weight:600;white-space:nowrap}
+kbd{background:var(--surface2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:13px}
+code{background:var(--surface2);border-radius:5px;padding:1px 5px;font-size:.9em;word-break:break-word}
+.codebox{position:relative;margin:10px 0 14px}
+pre{margin:0;background:var(--code-bg);color:var(--code-text);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:14px;line-height:1.6}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.k{color:var(--code-key)} .s{color:var(--code-str)} .c{color:var(--code-com)} .n{color:var(--code-num)}
+.copy{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);color:#e6edf3;border:1px solid rgba(255,255,255,.2);border-radius:6px;font:inherit;font-size:12px;padding:2px 10px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.2)}
+.note{border-radius:10px;padding:12px 14px;margin:12px 0;border:1px solid;font-size:15px}
+.note b:first-child{display:block;margin-bottom:2px}
+.info{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.ok{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.bad{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.linkbox{border:2px dashed var(--accent);border-radius:12px;padding:16px;text-align:center;background:var(--accent-soft);margin:12px 0}
+.linkbox .big{font-size:18px;font-weight:700}
+.tbl{overflow-x:auto;margin:10px 0 14px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--surface2);font-weight:600;white-space:nowrap}
+td:first-child code{white-space:nowrap;word-break:normal}
+tr:last-child td{border-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface)}
+.card h4{margin:0 0 6px;font-size:16px}
+figure{margin:14px 0;text-align:center}
+figure svg{max-width:100%;height:auto}
+figcaption{color:var(--muted);font-size:13px;margin-top:4px}
+.tree{background:var(--surface2);border-radius:10px;padding:12px 16px;font-family:"Cascadia Code",Consolas,monospace;font-size:14px;line-height:1.6;overflow-x:auto;white-space:pre}
+.check{list-style:none;padding:0;margin:8px 0}
+.check li{padding-left:28px;position:relative;margin:6px 0}
+.check li::before{content:"";position:absolute;left:2px;top:6px;width:16px;height:16px;border-radius:4px;border:2px solid var(--ok)}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;background:var(--surface)}
+details summary{cursor:pointer;font-weight:600}
+details[open] summary{margin-bottom:6px}
+.svg-t{fill:var(--text)} .svg-m{fill:var(--muted)} .svg-line{stroke:var(--line)} .svg-surf{fill:var(--surface2)}
+.svg-acc{fill:var(--accent)} .svg-acc-s{stroke:var(--accent)} .svg-ok{fill:var(--ok)}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
+@media (max-width:820px){
+  .layout{grid-template-columns:1fr;gap:16px;padding-top:16px}
+  nav.toc{position:static;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .grid2{grid-template-columns:1fr}
+  section.step{padding:18px 14px 14px}
+}
+@media print{
+  nav.toc,.copy{display:none}
+  .layout{grid-template-columns:1fr}
+  section.step{break-inside:avoid-page}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>คู่มือติดตั้งและใช้งาน PB-BLE<br><span style="opacity:.85;font-size:.7em">บอร์ด NKP_ONE (ESP32)</span></h1>
+    <p>ควบคุมหุ่นยนต์ NKP_ONE (ESP32) ด้วยแอป PB Controller ผ่าน Bluetooth ตั้งแต่ติดตั้งโปรแกรมจนอัปโหลดโค้ดลงบอร์ด</p>
+    <div class="chips">
+      <span class="chip">Arduino IDE 2.x</span>
+      <span class="chip">ESP32 Core 3.3.11</span>
+      <span class="chip">PB-BLE Library</span>
+      <span class="chip">โหมด 4BTN · 8BTN · Joystick</span>
+    </div>
+    <div class="hero-links">
+      <a class="hbtn primary" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/archive/refs/heads/main.zip">⬇ ดาวน์โหลดโค้ด (.zip)</a>
+      <a class="hbtn" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/NKP_ONE" target="_blank" rel="noopener">GitHub</a>
+      <a class="hbtn" href="https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_ONE/" target="_blank" rel="noopener">คู่มือออนไลน์</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="toc" aria-label="สารบัญ">
+    <b>สารบัญ</b>
+    <ol>
+      <li><a href="#s1">เตรียมอุปกรณ์</a></li>
+      <li><a href="#s2">ติดตั้ง Arduino IDE</a></li>
+      <li><a href="#s3">ติดตั้งบอร์ด ESP32</a></li>
+      <li><a href="#s4">ติดตั้ง Lib PB-BLE</a></li>
+      <li><a href="#s5">ดาวน์โหลดโค้ดตัวอย่าง</a></li>
+      <li><a href="#s6">ตั้งชื่อและรหัสบอร์ด</a></li>
+      <li><a href="#s7">ปรับความเร็ว</a></li>
+      <li><a href="#s8">เลือกบอร์ดและอัปโหลด</a></li>
+      <li><a href="#s9">เชื่อมต่อแอปและทดสอบ</a></li>
+      <li><a href="#s10">แก้ปัญหาที่พบบ่อย</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- 1 -->
+  <section class="step" id="s1">
+    <h2><span class="num">1</span>เตรียมอุปกรณ์</h2>
+    <ul class="check">
+      <li>คอมพิวเตอร์ Windows / macOS / Linux ที่ต่ออินเทอร์เน็ตได้</li>
+      <li>บอร์ด <b>NKP_ONE (ESP32)</b> พร้อมมอเตอร์ซ้าย (M1) – ขวา (M2) และแบตเตอรี่</li>
+      <li>สาย USB ที่<b>ส่งข้อมูลได้</b> (สายชาร์จอย่างเดียวจะมองไม่เห็นบอร์ด)</li>
+      <li>มือถือที่ติดตั้งแอป <b>PB Controller</b> และเปิด Bluetooth</li>
+    </ul>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" id="s2">
+    <h2><span class="num">2</span>ติดตั้ง Arduino IDE</h2>
+    <ol class="steps">
+      <li>เข้าเว็บ <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">arduino.cc/en/software</a></li>
+      <li>ดาวน์โหลด <b>Arduino IDE 2.x</b> ตามระบบปฏิบัติการของเครื่อง แล้วติดตั้งตามขั้นตอนปกติ</li>
+      <li>ถ้าโปรแกรมถามให้ติดตั้ง Driver (USB / Serial) ให้กด <b>Install</b> ทุกตัว</li>
+    </ol>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" id="s3">
+    <h2><span class="num">3</span>ติดตั้งบอร์ด ESP32 (Core)</h2>
+
+    <h3>3.1 เพิ่มลิงก์บอร์ด ESP32</h3>
+    <ol class="steps">
+      <li>เปิด <span class="menu">File › Preferences…</span> (macOS: <span class="menu">Arduino IDE › Settings…</span>)</li>
+      <li>ในช่อง <b>Additional boards manager URLs</b> วางลิงก์นี้ แล้วกด <b>OK</b></li>
+    </ol>
+    <div class="codebox"><pre><code>https://espressif.github.io/arduino-esp32/package_esp32_index.json</code></pre><button class="copy" type="button">Copy</button></div>
+    <p style="margin-top:-4px;color:var(--muted);font-size:14px">ถ้าในช่องมีลิงก์อื่นอยู่แล้ว ให้กดไอคอนข้างช่องแล้วเพิ่มลิงก์นี้เป็นบรรทัดใหม่</p>
+
+    <h3>3.2 ติดตั้ง esp32 เวอร์ชัน 3.3.11</h3>
+    <ol class="steps">
+      <li>เปิด <span class="menu">Tools › Board › Boards Manager…</span> (หรือกดไอคอนบอร์ดที่แถบซ้าย)</li>
+      <li>ค้นหา <code>esp32</code> แล้วหาตัวที่ชื่อ <b>esp32 by Espressif Systems</b></li>
+      <li>ที่ช่องเลือกเวอร์ชัน เลือก <b>3.3.11</b> แล้วกด <b>Install</b> รอจนเสร็จ (ใช้เวลาหลายนาที)</li>
+    </ol>
+    <div class="note bad">
+      <b>ห้ามใช้ esp32 เวอร์ชัน 4.x</b>
+      Core 4.0.0 ขึ้นไปเปลี่ยนระบบ Bluetooth ใหม่ทั้งหมด ถ้าใช้จะ compile ไม่ผ่านและขึ้นข้อความ <code>BLEDevice.h: No such file or directory</code>
+      ถ้าเผลอติดตั้งไปแล้ว ให้กลับไปที่ Boards Manager แล้วเลือกเวอร์ชัน <b>3.3.11</b> กด Install ทับได้เลย
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" id="s4">
+    <h2><span class="num">4</span>ติดตั้ง Lib PB-BLE</h2>
+    <ol class="steps">
+      <li>เข้าหน้าดาวน์โหลดล่าสุด: <a href="https://github.com/Amornthep-ra/PB-BLE/releases/latest" target="_blank" rel="noopener">github.com/Amornthep-ra/PB-BLE/releases/latest</a></li>
+      <li>เลื่อนลงไปหัวข้อ <b>Assets</b> แล้วดาวน์โหลดไฟล์ <b>PB-BLE.zip</b> (<b>ไม่ต้องแตกไฟล์</b>)</li>
+      <li>ใน Arduino IDE เปิด <span class="menu">Sketch › Include Library › Add .ZIP Library…</span></li>
+      <li>เลือกไฟล์ <b>PB-BLE.zip</b> ที่ดาวน์โหลดมา รอจนมีข้อความ <i>Library installed</i></li>
+      <li>ตรวจสอบ: เปิด <span class="menu">File › Examples</span> ต้องเห็นหมวด <b>PB-BLE</b></li>
+    </ol>
+    <div class="note warn">
+      <b>อย่าติดตั้ง Lib BLE ตัวอื่นเพิ่ม</b>
+      PB-BLE ใช้ Bluetooth ที่มากับบอร์ด ESP32 อยู่แล้ว ไม่ต้องลง “ESP32 BLE Arduino” แยก
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" id="s5">
+    <h2><span class="num">5</span>ดาวน์โหลดโค้ดตัวอย่าง</h2>
+    <div class="linkbox">
+      <div class="big">ดาวน์โหลดโค้ดตัวอย่างทั้งหมด</div>
+      <a class="dl" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/archive/refs/heads/main.zip">⬇ PB-BLE-Example-All.zip</a>
+      <div style="color:var(--muted);font-size:14px">หรือเข้า <a href="https://github.com/Amornthep-ra/PB-BLE-Example-All" target="_blank" rel="noopener">github.com/Amornthep-ra/PB-BLE-Example-All</a> แล้วกดปุ่มเขียว <b>Code › Download ZIP</b></div>
+    </div>
+    <ol class="steps">
+      <li>กดลิงก์ด้านบนเพื่อดาวน์โหลดไฟล์ zip</li>
+      <li><b>แตกไฟล์ zip ก่อน</b> (Windows: คลิกขวาที่ไฟล์ แล้วเลือก <span class="menu">Extract All…</span>) แล้ววางไว้ในที่ที่หาง่าย เช่น Desktop หรือ <code>Documents/Arduino</code></li>
+    </ol>
+    <div class="note warn"><b>ห้ามเปิดไฟล์ .ino จากในไฟล์ zip โดยตรง</b>ถ้าไม่แตกไฟล์ก่อน Arduino IDE จะหา <code>NKP_Motor_drive.h</code> ไม่เจอ และจะบันทึกค่าที่แก้ไม่ได้</div>
+    <p>ไฟล์ zip รวมตัวอย่างของหลายบอร์ดไว้ด้วยกัน ให้เข้าโฟลเดอร์ <b><code>NKP_ONE</code></b> ในนั้นมี 3 โปรแกรม เลือกตามโหมดที่จะใช้บังคับในแอป</p>
+    <div class="tree">PB-BLE-Example-All-main/
+└── NKP_ONE/                         ← ใช้โฟลเดอร์นี้
+    ├── PB_4BTN_Control/
+    │   ├── PB_4BTN_Control.ino      ← บังคับด้วยปุ่มลูกศร + ปุ่ม Lo/Med/Hi (โหมด 4BTN)
+    │   └── NKP_Motor_drive.h
+    ├── PB_8BTN_Control/
+    │   ├── PB_8BTN_Control.ino      ← บังคับด้วยปุ่มลูกศร (โหมด 8BTN)
+    │   └── NKP_Motor_drive.h        ← ไฟล์สั่งมอเตอร์ของบอร์ด (ห้ามลบ)
+    └── PB_Joystick_Control/
+        ├── PB_Joystick_Control.ino  ← บังคับด้วยจอย เลือกได้ 6 แบบ (โหมด Joystick)
+        └── NKP_Motor_drive.h</div>
+    <ol class="steps">
+      <li>เปิดไฟล์ <code>.ino</code> ที่ต้องการด้วย Arduino IDE (ดับเบิลคลิก หรือ <span class="menu">File › Open…</span>)</li>
+      <li>ด้านบนต้องเห็นแท็บ 2 แท็บ คือ <code>.ino</code> และ <code>NKP_Motor_drive.h</code></li>
+    </ol>
+    <div class="note info">
+      <b>ข้อควรระวัง</b>
+      ชื่อโฟลเดอร์ต้องตรงกับชื่อไฟล์ <code>.ino</code> และต้องมี <code>NKP_Motor_drive.h</code> อยู่ในโฟลเดอร์เดียวกัน ห้ามย้ายไฟล์ <code>.ino</code> ออกมาอยู่ตัวเดียว
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" id="s6">
+    <h2><span class="num">6</span>ตั้งชื่อและรหัสบอร์ด</h2>
+    <p>ด้านบนของไฟล์ <code>.ino</code> จะมี 3 บรรทัดนี้ <b>แต่ละคนต้องตั้งไม่ให้ซ้ำกัน</b> ไม่อย่างนั้นมือถือจะเชื่อมผิดตัว</p>
+    <div class="codebox"><pre><code><span class="k">const char</span> *BLE_NAME  = <span class="s">"PB-NKPONE01"</span>;    <span class="c">// ชื่อที่เห็นในแอป</span>
+<span class="k">const char</span> *BOARD_ID  = <span class="s">"NKPONE01"</span>;       <span class="c">// รหัสบอร์ด</span>
+<span class="k">const char</span> *PAIR_CODE = <span class="s">"12345678"</span>;       <span class="c">// รหัสจับคู่ที่ต้องกรอกในแอป</span></code></pre><button class="copy" type="button">Copy</button></div>
+    <div class="tbl"><table>
+      <tr><th>ค่า</th><th>กติกา</th><th>ตัวอย่าง</th></tr>
+      <tr><td><code>BLE_NAME</code></td><td>ชื่อที่จะแสดงในแอป ห้ามเว้นว่าง</td><td><code>PB-Team05</code></td></tr>
+      <tr><td><code>BOARD_ID</code></td><td>ภาษาอังกฤษ/ตัวเลข 1–32 ตัว ไม่มีเว้นวรรคหรือสัญลักษณ์ ห้ามซ้ำกับบอร์ดอื่น</td><td><code>Team05</code></td></tr>
+      <tr><td><code>PAIR_CODE</code></td><td>ภาษาอังกฤษ/ตัวเลข 8–16 ตัว ไม่มีเว้นวรรคหรือสัญลักษณ์ (ตัวเล็ก/ใหญ่ถือว่าเหมือนกัน)</td><td><code>Robot2026</code></td></tr>
+    </table></div>
+    <div class="note warn"><b>ห้ามใช้ - _ หรือช่องว่างใน BOARD_ID และ PAIR_CODE</b>ถ้าใส่ผิดกติกา บอร์ดจะเชื่อมต่อแอปไม่ได้ (ใน <code>BLE_NAME</code> ใช้ <code>-</code> ได้)</div>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" id="s7">
+    <h2><span class="num">7</span>ปรับความเร็ว</h2>
+    <p>ความเร็วมอเตอร์ทั้งหมดใช้สเกล <b>0–100</b> โดย 100 คือแรงสุด ค่าติดลบคือหมุนถอยหลัง</p>
+
+    <h3>7.1 โหมด 4BTN (ไฟล์ <code>PB_4BTN_Control.ino</code>)</h3>
+    <p>กดปุ่ม <b>Lo / Med / Hi</b> ในแอปเพื่อเปลี่ยนระดับความเร็ว ระดับที่เลือกจะค้างไว้จนกว่าจะกดระดับอื่น ตอนเปิดเครื่องจะเริ่มที่ <b>Lo</b></p>
+    <figure>
+      <svg viewBox="0 0 520 200" role="img" aria-label="ปุ่มโหมด 4BTN และปุ่มระดับความเร็ว">
+        <g font-size="13" text-anchor="middle">
+          <rect x="95" y="10" width="80" height="50" rx="10" class="svg-acc" opacity=".14"/>
+          <text x="135" y="32" class="svg-t" font-weight="700">UP</text><text x="135" y="50" class="svg-m">เดินหน้า</text>
+          <rect x="95" y="140" width="80" height="50" rx="10" class="svg-acc" opacity=".14"/>
+          <text x="135" y="162" class="svg-t" font-weight="700">DOWN</text><text x="135" y="180" class="svg-m">ถอยหลัง</text>
+          <rect x="10" y="75" width="80" height="50" rx="10" class="svg-acc" opacity=".14"/>
+          <text x="50" y="97" class="svg-t" font-weight="700">LEFT</text><text x="50" y="115" class="svg-m">หมุนซ้าย</text>
+          <rect x="180" y="75" width="80" height="50" rx="10" class="svg-acc" opacity=".14"/>
+          <text x="220" y="97" class="svg-t" font-weight="700">RIGHT</text><text x="220" y="115" class="svg-m">หมุนขวา</text>
+
+          <text x="410" y="40" class="svg-t" font-weight="700">ระดับความเร็ว</text>
+          <rect x="310" y="60" width="60" height="40" rx="20" class="svg-ok" opacity=".2"/>
+          <text x="340" y="85" class="svg-t" font-weight="700">Lo</text>
+          <rect x="380" y="60" width="60" height="40" rx="20" class="svg-ok" opacity=".2"/>
+          <text x="410" y="85" class="svg-t" font-weight="700">Med</text>
+          <rect x="450" y="60" width="60" height="40" rx="20" class="svg-ok" opacity=".2"/>
+          <text x="480" y="85" class="svg-t" font-weight="700">Hi</text>
+          <text x="410" y="130" class="svg-m">กดครั้งเดียว ค่าค้างไว้</text>
+          <text x="410" y="150" class="svg-m">กดทิศพร้อมกัน 2 ปุ่ม = วิ่งโค้ง</text>
+        </g>
+      </svg>
+      <figcaption>ปุ่มในโหมด 4BTN</figcaption>
+    </figure>
+    <p>ความเร็วของแต่ละระดับแก้ได้ที่ด้านบนของไฟล์</p>
+    <div class="codebox"><pre><code><span class="c">//                          Lo   Med  Hi</span>
+<span class="k">const int</span> DRIVE_SPEED[<span class="n">3</span>] = { <span class="n">30</span>,  <span class="n">60</span>, <span class="n">100</span> };  <span class="c">// forward / backward</span>
+<span class="k">const int</span> TURN_SPEED[<span class="n">3</span>]  = { <span class="n">25</span>,  <span class="n">35</span>,  <span class="n">50</span> };  <span class="c">// spin + how tight curves are</span></code></pre><button class="copy" type="button">Copy</button></div>
+    <div class="tbl"><table>
+      <tr><th>ค่า</th><th>ความหมาย</th><th>ปรับอย่างไร</th></tr>
+      <tr><td><code>DRIVE_SPEED</code></td><td>ความเร็วเดินหน้า/ถอยหลังของระดับ Lo, Med, Hi ตามลำดับ</td><td>หุ่นวิ่งเร็วจนคุมไม่อยู่ → ลดตัวเลข</td></tr>
+      <tr><td><code>TURN_SPEED</code></td><td>ความเร็วหมุนตัว และความแคบของโค้ง (ใช้หลักเดียวกับ TRN ในหัวข้อ 7.2)</td><td>หมุนไวเกิน → ลด<br>โค้งกว้างเกิน → เพิ่ม</td></tr>
+    </table></div>
+
+    <h3>7.2 โหมด 8BTN (ไฟล์ <code>PB_8BTN_Control.ino</code>)</h3>
+    <p>โหมดนี้<b>ไม่ต้องแก้โค้ด</b> ปรับความเร็วได้จากแถบเลื่อนในแอปเลย</p>
+    <div class="grid2">
+      <div class="card"><h4>DRV</h4>ความเร็วเดินหน้า / ถอยหลัง</div>
+      <div class="card"><h4>TRN</h4>ความเร็วหมุนตัว และความแคบของโค้ง (ค่ายิ่งมาก โค้งยิ่งแคบ)</div>
+    </div>
+    <figure>
+      <svg viewBox="0 0 520 300" role="img" aria-label="ผังปุ่ม 8 ทิศทาง">
+        <g font-size="13" text-anchor="middle">
+          <!-- center -->
+          <rect x="210" y="115" width="100" height="70" rx="12" class="svg-surf"/>
+          <text x="260" y="146" class="svg-t" font-weight="700">หุ่นยนต์</text>
+          <text x="260" y="166" class="svg-m">ปล่อย = หยุด</text>
+          <!-- boxes -->
+          <g class="svg-t">
+            <rect x="200" y="15" width="120" height="58" rx="10" class="svg-acc" opacity=".14"/>
+            <text x="260" y="40" font-weight="700">UP (1)</text><text x="260" y="60" class="svg-m">เดินหน้า</text>
+            <rect x="200" y="227" width="120" height="58" rx="10" class="svg-acc" opacity=".14"/>
+            <text x="260" y="252" font-weight="700">DOWN (2)</text><text x="260" y="272" class="svg-m">ถอยหลัง</text>
+            <rect x="40" y="121" width="140" height="58" rx="10" class="svg-acc" opacity=".14"/>
+            <text x="110" y="146" font-weight="700">LEFT (4)</text><text x="110" y="166" class="svg-m">หมุนซ้าย</text>
+            <rect x="340" y="121" width="140" height="58" rx="10" class="svg-acc" opacity=".14"/>
+            <text x="410" y="146" font-weight="700">RIGHT (8)</text><text x="410" y="166" class="svg-m">หมุนขวา</text>
+            <rect x="20" y="15" width="150" height="58" rx="10" class="svg-ok" opacity=".14"/>
+            <text x="95" y="40" font-weight="700">UP+LEFT (5)</text><text x="95" y="60" class="svg-m">โค้งซ้ายไปหน้า</text>
+            <rect x="350" y="15" width="150" height="58" rx="10" class="svg-ok" opacity=".14"/>
+            <text x="425" y="40" font-weight="700">UP+RIGHT (9)</text><text x="425" y="60" class="svg-m">โค้งขวาไปหน้า</text>
+            <rect x="20" y="227" width="150" height="58" rx="10" class="svg-ok" opacity=".14"/>
+            <text x="95" y="252" font-weight="700">DOWN+LEFT (6)</text><text x="95" y="272" class="svg-m">โค้งซ้ายถอยหลัง</text>
+            <rect x="350" y="227" width="150" height="58" rx="10" class="svg-ok" opacity=".14"/>
+            <text x="425" y="252" font-weight="700">DOWN+RIGHT (10)</text><text x="425" y="272" class="svg-m">โค้งขวาถอยหลัง</text>
+          </g>
+        </g>
+      </svg>
+      <figcaption>ปุ่มในโหมด 8BTN (ตัวเลขในวงเล็บคือค่า CMD)</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th>การเคลื่อนที่</th><th>ล้อซ้าย</th><th>ล้อขวา</th></tr>
+      <tr><td>เดินหน้า / ถอยหลัง</td><td>±DRV</td><td>±DRV</td></tr>
+      <tr><td>หมุนซ้ายอยู่กับที่</td><td>−TRN</td><td>+TRN</td></tr>
+      <tr><td>โค้งซ้ายไปหน้า</td><td>DRV − TRN (ล้อใน)</td><td>DRV (ล้อนอก)</td></tr>
+    </table></div>
+    <div class="note info"><b>ตัวอย่าง</b>ตั้ง DRV = 80, TRN = 30 แล้วกด UP+LEFT: ล้อซ้ายวิ่ง 50 ล้อขวาวิ่ง 80 หุ่นจะโค้งซ้ายกว้าง ๆ ถ้าตั้ง TRN ≥ DRV ล้อในจะหยุด และหุ่นจะโค้งแคบที่สุด</div>
+
+    <h3>7.3 โหมด Joystick (ไฟล์ <code>PB_Joystick_Control.ino</code>)</h3>
+    <p><b>ขั้นที่ 1: เลือกรูปแบบการบังคับ</b> แก้ตัวเลขหรือชื่อในบรรทัดนี้ แล้วอัปโหลดใหม่</p>
+    <div class="codebox"><pre><code><span class="k">#define</span> JOY_MODE  ARCADE_DUAL   <span class="c">// &lt;-- choose 1..6 (or the name)</span></code></pre><button class="copy" type="button">Copy</button></div>
+    <div class="tbl"><table>
+      <tr><th>JOY_MODE</th><th>จอยซ้าย</th><th>จอยขวา</th><th>เหมาะกับ</th></tr>
+      <tr><td><code>1</code> <code>ARCADE_DUAL</code><br><small>ค่าเริ่มต้น</small></td><td>ขึ้น–ลง = เดินหน้า/ถอย</td><td>ซ้าย–ขวา = เลี้ยว</td><td>ใช้ทั่วไป บังคับง่ายที่สุด</td></tr>
+      <tr><td><code>2</code> <code>ARCADE_DUAL_SWAP</code></td><td>ซ้าย–ขวา = เลี้ยว</td><td>ขึ้น–ลง = เดินหน้า/ถอย</td><td>คนถนัดซ้าย</td></tr>
+      <tr><td><code>3</code> <code>ARCADE_LEFT</code></td><td>ขึ้น–ลง = เดินหน้า/ถอย<br>ซ้าย–ขวา = เลี้ยว</td><td>ไม่ใช้</td><td>บังคับด้วยมือซ้ายมือเดียว</td></tr>
+      <tr><td><code>4</code> <code>ARCADE_RIGHT</code></td><td>ไม่ใช้</td><td>ขึ้น–ลง = เดินหน้า/ถอย<br>ซ้าย–ขวา = เลี้ยว</td><td>บังคับด้วยมือขวามือเดียว</td></tr>
+      <tr><td><code>5</code> <code>TANK</code></td><td>ขึ้น–ลง = ล้อซ้าย</td><td>ขึ้น–ลง = ล้อขวา</td><td>แบบรถถัง คุมล้อทีละข้างได้แม่น</td></tr>
+      <tr><td><code>6</code> <code>CAR</code></td><td>ขึ้น–ลง = คันเร่ง</td><td>ซ้าย–ขวา = พวงมาลัย</td><td>แบบรถจริง ต้องเร่งก่อนถึงจะเลี้ยวได้ และหมุนอยู่กับที่ไม่ได้</td></tr>
+    </table></div>
+    <p style="color:var(--muted);font-size:14px">รูปด้านล่างคือแบบ 1 (<code>ARCADE_DUAL</code>)</p>
+    <figure>
+      <svg viewBox="0 0 520 210" role="img" aria-label="จอยซ้ายและจอยขวา">
+        <g font-size="13" text-anchor="middle">
+          <circle cx="130" cy="100" r="70" class="svg-surf"/>
+          <circle cx="130" cy="100" r="26" fill="none" stroke-dasharray="4 3" stroke-width="2" class="svg-acc-s"/>
+          <circle cx="130" cy="100" r="14" class="svg-acc"/>
+          <path d="M130 40 l-9 14 h18z M130 160 l-9 -14 h18z" class="svg-acc"/>
+          <text x="130" y="22" class="svg-t" font-weight="700">ดันขึ้น = เดินหน้า</text>
+          <text x="130" y="190" class="svg-t" font-weight="700">ดึงลง = ถอยหลัง</text>
+          <text x="130" y="206" class="svg-m">จอยซ้าย (แกนขึ้น–ลง)</text>
+
+          <circle cx="390" cy="100" r="70" class="svg-surf"/>
+          <circle cx="390" cy="100" r="26" fill="none" stroke-dasharray="4 3" stroke-width="2" class="svg-acc-s"/>
+          <circle cx="390" cy="100" r="14" class="svg-acc"/>
+          <path d="M330 100 l14 -9 v18z M450 100 l-14 -9 v18z" class="svg-acc"/>
+          <text x="390" y="22" class="svg-t" font-weight="700">ซ้าย / ขวา = เลี้ยว</text>
+          <text x="390" y="190" class="svg-m">จอยขวา (แกนซ้าย–ขวา)</text>
+          <text x="260" y="104" class="svg-m" font-size="12">วงประ = Dead zone</text>
+        </g>
+      </svg>
+      <figcaption>ใช้จอยสองข้างพร้อมกันเพื่อวิ่งโค้ง</figcaption>
+    </figure>
+    <p><b>ขั้นที่ 2: ปรับค่า</b> ค่าอยู่ด้านบนของไฟล์ แก้ตัวเลขแล้วอัปโหลดใหม่</p>
+    <div class="codebox"><pre><code><span class="k">const int</span> DEADZONE  = <span class="n">15</span>;   <span class="c">// stick center zone ignored; speed starts from 0 after it</span>
+<span class="k">const int</span> MAX_SPEED = <span class="n">100</span>;  <span class="c">// cap for every wheel (lower = slower robot)</span>
+<span class="k">const int</span> TURN_MAX  = <span class="n">25</span>;   <span class="c">// modes 1-4: turn amount at full stick</span>
+<span class="k">const int</span> CAR_STEER = <span class="n">70</span>;   <span class="c">// mode 6: how much the inner wheel slows at full steering (%)</span></code></pre><button class="copy" type="button">Copy</button></div>
+    <div class="tbl"><table>
+      <tr><th>ค่า</th><th>ความหมาย</th><th>ปรับอย่างไร</th></tr>
+      <tr><td><code>DEADZONE</code><br><small>ค่าเริ่ม 15</small></td>
+          <td>ระยะตรงกลางจอยที่ไม่นับว่าดัน กันหุ่นไหลเองตอนปล่อยมือ เมื่อดันพ้นระยะนี้ ความเร็วจะเริ่มจาก 0</td>
+          <td>หุ่นขยับเองตอนปล่อยจอย → <b>เพิ่ม</b> (เช่น 20)<br>ต้องดันลึกกว่าจะเริ่มวิ่ง → <b>ลด</b> (เช่น 10)</td></tr>
+      <tr><td><code>MAX_SPEED</code><br><small>ค่าเริ่ม 100</small><br><small>ทุกแบบ</small></td>
+          <td>เพดานความเร็วของทุกล้อ ดันจอยสุดก็ไม่เกินค่านี้</td>
+          <td>ผู้เริ่มต้นหรือสนามเล็ก → <b>ลด</b> (เช่น 60)</td></tr>
+      <tr><td><code>TURN_MAX</code><br><small>ค่าเริ่ม 25</small><br><small>แบบ 1–4</small></td>
+          <td>แรงเลี้ยวสูงสุดเมื่อดันจอยแกนเลี้ยวจนสุด (0–100)</td>
+          <td>เลี้ยวไวเกิน / หมุนคว้าง → <b>ลด</b> (เช่น 15)<br>เลี้ยวช้า / โค้งกว้างเกิน → <b>เพิ่ม</b> (เช่น 40)</td></tr>
+      <tr><td><code>CAR_STEER</code><br><small>ค่าเริ่ม 70</small><br><small>แบบ 6</small></td>
+          <td>ล้อด้านในจะช้าลงกี่ % เมื่อหมุนพวงมาลัยจนสุด (100 = ล้อในหยุด)</td>
+          <td>โค้งกว้างเกิน → <b>เพิ่ม</b><br>เลี้ยวแรงเกิน → <b>ลด</b></td></tr>
+    </table></div>
+    <div class="note info"><b>ความเร็วตรงและความเร็วเลี้ยวรวมกันอย่างไร (แบบ 1–4)</b>ล้อซ้าย = เดินหน้า + เลี้ยว และล้อขวา = เดินหน้า − เลี้ยว ถ้าข้างไหนเกิน 100 โปรแกรมจะลดทั้งสองข้างตามสัดส่วนเดียวกันให้เอง ส่วนแบบ 5 <code>TANK</code> ไม่ใช้ <code>TURN_MAX</code> เพราะจอยแต่ละข้างคุมล้อโดยตรง</div>
+    <div class="note ok"><b>เช็กว่าอัปโหลดแบบที่ถูกแล้ว</b>เปิด Serial Monitor (115200) แล้วกดรีเซ็ตบอร์ด จะขึ้นข้อความ <code>Joystick mode: 1 (ARCADE_DUAL)</code></div>
+
+    <h3>7.4 ถ้าล้อหมุนผิดทาง (ใช้ได้ทุกไฟล์)</h3>
+    <p>หาฟังก์ชัน <code>drive()</code> ในไฟล์ แล้วใส่เครื่องหมายลบหน้าค่าของล้อที่หมุนกลับด้าน</p>
+    <div class="codebox"><pre><code><span class="k">void</span> drive(<span class="k">int</span> left, <span class="k">int</span> right) {
+  ...
+  motor(<span class="n">1</span>, -left);   <span class="c">// ล้อซ้ายหมุนกลับด้าน → ใส่ - หน้า left</span>
+  motor(<span class="n">2</span>, right);   <span class="c">// ล้อขวา</span>
+  ...
+}</code></pre><button class="copy" type="button">Copy</button></div>
+    <p style="color:var(--muted);font-size:14px">ถ้ากดเลี้ยวซ้ายแล้วหุ่นไปทางขวา แสดงว่าสายมอเตอร์ซ้าย–ขวาสลับกัน ให้สลับเลข <code>motor(1, …)</code> กับ <code>motor(2, …)</code></p>
+  </section>
+
+  <!-- 8 -->
+  <section class="step" id="s8">
+    <h2><span class="num">8</span>เลือกบอร์ดและอัปโหลด</h2>
+    <ol class="steps">
+      <li>เสียบสาย USB เข้าบอร์ด NKP_ONE</li>
+      <li><span class="menu">Tools › Board › esp32 › ESP32 Dev Module</span></li>
+      <li><span class="menu">Tools › Port</span> เลือกพอร์ตของบอร์ด (Windows จะเป็น <code>COMx</code> ส่วน macOS จะเป็น <code>/dev/cu.usbserial…</code> หรือ <code>/dev/cu.wchusbserial…</code>)</li>
+      <li>ตั้งค่าเมนู <span class="menu">Tools</span> ตามตารางนี้</li>
+    </ol>
+    <div class="tbl"><table>
+      <tr><th>เมนู Tools</th><th>ค่าที่ตั้ง</th></tr>
+      <tr><td>Partition Scheme</td><td><b>Huge APP (3MB No OTA/1MB SPIFFS)</b> (โค้ด Bluetooth บน ESP32 มักใหญ่เกินค่าเริ่มต้น จนขึ้น <i>Sketch too big</i>)</td></tr>
+      <tr><td>อื่น ๆ</td><td>ใช้ค่าเดิม</td></tr>
+    </table></div>
+    <ol class="steps" start="5">
+      <li>กดปุ่ม <b>✓ Verify</b> ก่อน เพื่อตรวจว่า compile ผ่าน</li>
+      <li>กดปุ่ม <b>→ Upload</b> รอจนขึ้นข้อความ <code>Hard resetting via RTS pin...</code> แสดงว่าเสร็จแล้ว</li>
+    </ol>
+    <div class="note warn">
+      <b>ถ้าขึ้น “Failed to connect” หรือหาพอร์ตไม่เจอ</b>
+      ตรวจว่าเลือกพอร์ตถูก และติดตั้งไดรเวอร์ USB-Serial แล้ว (<b>CH340</b> หรือ <b>CP210x</b> ขึ้นกับชิปบนบอร์ด) ถ้ายังไม่ได้ ให้กด Upload แล้ว<b>กดปุ่ม BOOT บนโมดูล ESP32 ค้างไว้</b> ตอนที่ขึ้นข้อความ <code>Connecting....</code> จนเริ่มอัปโหลด แล้วจึงปล่อย
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section class="step" id="s9">
+    <h2><span class="num">9</span>เชื่อมต่อแอปและทดสอบ</h2>
+    <div class="note bad"><b>ยกล้อหุ่นให้ลอยก่อนทดสอบครั้งแรก</b>ป้องกันหุ่นวิ่งตกโต๊ะถ้าทิศทางมอเตอร์ยังไม่ถูกต้อง</div>
+    <ol class="steps">
+      <li>เปิดสวิตช์แบตเตอรี่ของหุ่น</li>
+      <li>เปิดแอป <b>PB Controller</b> แล้วเลือกเชื่อมต่อ BLE ชื่อตาม <code>BLE_NAME</code> ที่ตั้งไว้</li>
+      <li>กรอก <b>Pair Code</b> ให้ตรงกับ <code>PAIR_CODE</code> ในโค้ด</li>
+      <li>เลือกโหมดให้ตรงกับโค้ดที่อัปโหลด: <b>4BTN</b>, <b>8BTN</b> หรือ <b>Joystick</b></li>
+      <li>กด <b>Start</b> แล้วลองกดปุ่มหรือดันจอย</li>
+    </ol>
+    <div class="note ok"><b>ระบบหยุดอัตโนมัติ</b>ถ้าหลุดการเชื่อมต่อ ยังไม่กด Start หรือแอปไม่ส่งข้อมูลเกิน 0.4 วินาที มอเตอร์จะหยุดเองทันที</div>
+    <p>ถ้าต้องการดูสถานะ เปิด <span class="menu">Tools › Serial Monitor</span> แล้วตั้งความเร็วเป็น <b>115200 baud</b></p>
+  </section>
+
+  <!-- 10 -->
+  <section class="step" id="s10">
+    <h2><span class="num">10</span>แก้ปัญหาที่พบบ่อย</h2>
+    <details><summary><code>BLEDevice.h: No such file or directory</code></summary>
+      ติดตั้ง esp32 core เป็นเวอร์ชัน 4.x อยู่ ให้ลดกลับเป็น <b>3.3.11</b> ตาม<a href="#s3">ขั้นตอนที่ 3</a></details>
+    <details><summary><code>NKP_Motor_drive.h: No such file or directory</code></summary>
+      ไฟล์ <code>NKP_Motor_drive.h</code> ไม่ได้อยู่ในโฟลเดอร์เดียวกับ <code>.ino</code> ให้ตรวจโครงสร้างโฟลเดอร์ใน<a href="#s5">ขั้นตอนที่ 5</a></details>
+    <details><summary><code>PBGamepad.h: No such file or directory</code></summary>
+      ยังไม่ได้ติดตั้ง Lib PB-BLE ให้ทำ<a href="#s4">ขั้นตอนที่ 4</a> แล้วปิดและเปิด Arduino IDE ใหม่</details>
+    <details><summary>Compile ไม่ผ่าน เพราะมีไฟล์ PBGamepad.h / .cpp ซ้ำ</summary>
+      ลบไฟล์ <code>PBGamepad.*</code> และ <code>PBJoystick.*</code> รุ่นเก่าที่คัดลอกไว้ข้างไฟล์ <code>.ino</code> ออก ให้เหลือแค่ตัวที่ติดตั้งเป็น Lib</details>
+    <details><summary>ไม่มีพอร์ตให้เลือกใน Tools › Port</summary>
+      ลองเปลี่ยนสาย USB เพราะบางเส้นชาร์จได้อย่างเดียว เปลี่ยนช่อง USB และติดตั้งไดรเวอร์ CH340 / CP210x (ดู<a href="#s8">ขั้นตอนที่ 8</a>)</details>
+    <details><summary>ในแอปไม่เจอชื่อบอร์ด</summary>
+      ตรวจว่าเปิด Bluetooth และ Location (Android) และให้สิทธิ์แอปแล้ว ตรวจว่าไม่มีมือถือเครื่องอื่นเชื่อมบอร์ดค้างอยู่ จากนั้นกดรีเซ็ตบอร์ดหรือถอดสายเสียบใหม่</details>
+    <details><summary>Pair Code ไม่ผ่าน</summary>
+      ตรวจว่า <code>PAIR_CODE</code> ในโค้ดที่<b>อัปโหลดล่าสุด</b>ตรงกับที่กรอก ยาว 8–16 ตัว และไม่มีสัญลักษณ์ ถ้าเพิ่งเปลี่ยนรหัส ให้ลบอุปกรณ์เก่าในแอปแล้วจับคู่ใหม่</details>
+    <details><summary>เชื่อมต่อแล้วแต่หุ่นไม่วิ่ง</summary>
+      ตรวจว่ากด <b>Start</b> ในแอปแล้ว เลือกโหมดตรงกับโค้ด (4BTN / 8BTN / Joystick) และเปิดแบตเตอรี่แล้ว ในโหมด 8BTN ให้ดูด้วยว่าแถบ DRV / TRN ไม่ได้อยู่ที่ 0 ส่วนโหมด Joystick แบบ <code>CAR</code> ต้องดันคันเร่งก่อน หุ่นถึงจะเลี้ยวได้</details>
+    <details><summary>Joystick บังคับแล้วไม่เหมือนที่คิด</summary>
+      ตรวจค่า <code>JOY_MODE</code> ในไฟล์ (ดู<a href="#s7">ขั้นตอนที่ 7.3</a>) เช่น แบบ <code>TANK</code> ต้องดันจอยทั้งสองข้างขึ้นพร้อมกันถึงจะเดินหน้าตรง</details>
+    <details><summary>หุ่นขยับเองตอนปล่อยจอย</summary>
+      เพิ่มค่า <code>DEADZONE</code> (ดู<a href="#s7">ขั้นตอนที่ 7.2</a>)</details>
+  </section>
+
+  </main>
+</div>
+
+<footer>PB-BLE · NKP_ONE (ESP32) · Arduino ESP32 Core 3.3.11<br>
+  คู่มือออนไลน์: <a href="https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_ONE/">amornthep-ra.github.io/PB-BLE-Example-All/NKP_ONE</a> ·
+  โค้ด: <a href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/NKP_ONE">GitHub</a></footer>
+
+<script>
+document.querySelectorAll('.codebox').forEach(function(box){
+  var btn = box.querySelector('.copy');
+  btn.addEventListener('click', function(){
+    var text = box.querySelector('code').innerText;
+    function done(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy'; }, 1500); }
+    function fallback(){
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+    try {
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback);
+      else fallback();
+    } catch(e) { fallback(); }
+  });
+});
+</script>
+</body>
+</html>
