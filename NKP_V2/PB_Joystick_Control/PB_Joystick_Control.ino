@@ -46,6 +46,25 @@ const int TURN_MAX  = 25;   // modes 1-4: turn amount at full stick
 const int CAR_STEER = 70;   // mode 6: how much the inner wheel slows at full steering (%)
 
 
+// ---- Drive type ----
+// 2 = 2WD : M1 = left wheel, M2 = right wheel        (same as KBIDE block "Move 2WD")
+// 4 = 4WD : left motor pair + right motor pair       (same as KBIDE block "Move 4WD")
+#define DRIVE_TYPE  2   // <-- 2 or 4
+
+// One side of the robot, speed -100..100 (uses the NKP_V2 motor controller states)
+void sideMotor(bool leftSide, int speed) {
+  uint8_t fwd, back;
+#if DRIVE_TYPE == 4
+  fwd  = leftSide ? 16 : 18;
+  back = leftSide ? 15 : 17;
+#else
+  fwd  = leftSide ? 0 : 2;
+  back = leftSide ? 1 : 3;
+#endif
+  if (speed >= 0) motor_control(fwd, speed);
+  else            motor_control(back, -speed);
+}
+
 int lastL = 9999, lastR = 9999;
 
 void drive(int left, int right) {
@@ -54,8 +73,8 @@ void drive(int left, int right) {
   static uint32_t lastSend = 0;
   // write when changed, and resend every 100 ms (I2C motor controller)
   if (left == lastL && right == lastR && millis() - lastSend < 100) return;
-  motor(1, left);   // left wheel
-  motor(2, right);  // right wheel
+  sideMotor(true,  left);   // left side  (2WD: M1, 4WD: left pair)
+  sideMotor(false, right);  // right side (2WD: M2, 4WD: right pair)
   lastL = left;
   lastR = right;
   lastSend = millis();

@@ -10,11 +10,11 @@
 
 ## บอร์ดที่รองรับ
 
-| บอร์ด | ชิป | โหมดในแอป | คู่มือ | โค้ด |
-|---|---|---|---|---|
-| PicoMini | ESP32-C3 | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/PicoMini/) | [`PicoMini/`](PicoMini) |
-| NKP_ONE | ESP32 | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_ONE/) | [`NKP_ONE/`](NKP_ONE) |
-| NKP_V2 | ESP32 | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_V2/) | [`NKP_V2/`](NKP_V2) |
+| บอร์ด | ชิป | ขับเคลื่อน | โหมดในแอป | คู่มือ | โค้ด |
+|---|---|---|---|---|---|
+| PicoMini | ESP32-C3 | 2WD | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/PicoMini/) | [`PicoMini/`](PicoMini) |
+| NKP_ONE | ESP32 | 2WD | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_ONE/) | [`NKP_ONE/`](NKP_ONE) |
+| NKP_V2 | ESP32 | 2WD / 4WD (`DRIVE_TYPE`) | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_V2/) | [`NKP_V2/`](NKP_V2) |
 
 ## โครงสร้าง
 

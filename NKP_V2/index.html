@@ -122,6 +122,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
       <span class="chip">ESP32 Core 3.3.11</span>
       <span class="chip">PB-BLE Library</span>
       <span class="chip">โหมด 4BTN · 8BTN · Joystick</span>
+      <span class="chip">2WD / 4WD</span>
     </div>
     <div class="hero-links">
       <a class="hbtn primary" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/archive/refs/heads/main.zip">⬇ ดาวน์โหลดโค้ด (.zip)</a>
@@ -155,7 +156,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
     <h2><span class="num">1</span>เตรียมอุปกรณ์</h2>
     <ul class="check">
       <li>คอมพิวเตอร์ Windows / macOS / Linux ที่ต่ออินเทอร์เน็ตได้</li>
-      <li>บอร์ด <b>NKP_V2 (ESP32)</b> พร้อมมอเตอร์ซ้าย (M1) – ขวา (M2) และแบตเตอรี่ (บอร์ดสั่งมอเตอร์ผ่านชิปควบคุมบนบอร์ดทาง I2C)</li>
+      <li>บอร์ด <b>NKP_V2 (ESP32)</b> พร้อมมอเตอร์ <b>2 ตัว (2WD)</b> หรือ <b>4 ตัว (4WD)</b> และแบตเตอรี่ (บอร์ดสั่งมอเตอร์ผ่านชิปควบคุมบนบอร์ดทาง I2C)</li>
       <li>สาย USB ที่<b>ส่งข้อมูลได้</b> (สายชาร์จอย่างเดียวจะมองไม่เห็นบอร์ด)</li>
       <li>มือถือที่ติดตั้งแอป <b>PB Controller</b> และเปิด Bluetooth</li>
     </ul>
@@ -261,6 +262,16 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
       <tr><td><code>PAIR_CODE</code></td><td>ภาษาอังกฤษ/ตัวเลข 8–16 ตัว ไม่มีเว้นวรรคหรือสัญลักษณ์ (ตัวเล็ก/ใหญ่ถือว่าเหมือนกัน)</td><td><code>Robot2026</code></td></tr>
     </table></div>
     <div class="note warn"><b>ห้ามใช้ - _ หรือช่องว่างใน BOARD_ID และ PAIR_CODE</b>ถ้าใส่ผิดกติกา บอร์ดจะเชื่อมต่อแอปไม่ได้ (ใน <code>BLE_NAME</code> ใช้ <code>-</code> ได้)</div>
+
+    <h3>เลือกแบบขับเคลื่อน 2WD / 4WD</h3>
+    <p>ถัดลงมาในไฟล์ <code>.ino</code> ให้ตั้งค่า <code>DRIVE_TYPE</code> ให้ตรงกับจำนวนมอเตอร์ของหุ่น</p>
+    <div class="codebox"><pre><code><span class="k">#define</span> DRIVE_TYPE  <span class="n">2</span>   <span class="c">// &lt;-- 2 or 4</span></code></pre><button class="copy" type="button">Copy</button></div>
+    <div class="tbl"><table>
+      <tr><th>DRIVE_TYPE</th><th>หุ่นแบบ</th><th>การต่อมอเตอร์</th></tr>
+      <tr><td><code>2</code> <small>(ค่าเริ่มต้น)</small></td><td><b>2WD</b> มอเตอร์ 2 ตัว</td><td>M1 = ล้อซ้าย, M2 = ล้อขวา (เหมือนบล็อก <i>Move 2WD</i> ใน KBIDE)</td></tr>
+      <tr><td><code>4</code></td><td><b>4WD</b> มอเตอร์ 4 ตัว</td><td>สั่งมอเตอร์ฝั่งซ้าย 2 ตัว และฝั่งขวา 2 ตัวพร้อมกัน ต่อสายแบบเดียวกับที่ใช้บล็อก <i>Move 4WD</i> ใน KBIDE</td></tr>
+    </table></div>
+    <div class="note info"><b>ใช้ได้ทั้ง 3 โปรแกรม</b>4BTN, 8BTN และ Joystick มีค่า <code>DRIVE_TYPE</code> เหมือนกัน ส่วนค่าความเร็วและโหมดจอยใช้แบบเดียวกันทั้ง 2WD และ 4WD</div>
   </section>
 
   <!-- 7 -->
@@ -411,11 +422,11 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
     <p>หาฟังก์ชัน <code>drive()</code> ในไฟล์ แล้วใส่เครื่องหมายลบหน้าค่าของล้อที่หมุนกลับด้าน</p>
     <div class="codebox"><pre><code><span class="k">void</span> drive(<span class="k">int</span> left, <span class="k">int</span> right) {
   ...
-  motor(<span class="n">1</span>, -left);   <span class="c">// ล้อซ้ายหมุนกลับด้าน → ใส่ - หน้า left</span>
-  motor(<span class="n">2</span>, right);   <span class="c">// ล้อขวา</span>
+  sideMotor(<span class="k">true</span>,  -left);   <span class="c">// ฝั่งซ้ายหมุนกลับด้าน → ใส่ - หน้า left</span>
+  sideMotor(<span class="k">false</span>, right);  <span class="c">// ฝั่งขวา</span>
   ...
 }</code></pre><button class="copy" type="button">Copy</button></div>
-    <p style="color:var(--muted);font-size:14px">ถ้ากดเลี้ยวซ้ายแล้วหุ่นไปทางขวา แสดงว่าสายมอเตอร์ซ้าย–ขวาสลับกัน ให้สลับเลข <code>motor(1, …)</code> กับ <code>motor(2, …)</code></p>
+    <p style="color:var(--muted);font-size:14px">ถ้ากดเลี้ยวซ้ายแล้วหุ่นไปทางขวา แสดงว่าสายมอเตอร์ซ้าย–ขวาสลับกัน ให้สลับ <code>left</code> กับ <code>right</code> ในสองบรรทัดนี้ ถ้าเป็น 4WD แล้วล้อบางตัวหมุนสวนทางกับตัวอื่น ให้สลับสายมอเตอร์ตัวนั้น</p>
   </section>
 
   <!-- 8 -->
@@ -478,6 +489,8 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
       ตรวจว่ากด <b>Start</b> ในแอปแล้ว เลือกโหมดตรงกับโค้ด (4BTN / 8BTN / Joystick) และเปิดแบตเตอรี่แล้ว ในโหมด 8BTN ให้ดูด้วยว่าแถบ DRV / TRN ไม่ได้อยู่ที่ 0 ส่วนโหมด Joystick แบบ <code>CAR</code> ต้องดันคันเร่งก่อน หุ่นถึงจะเลี้ยวได้</details>
     <details><summary>Joystick บังคับแล้วไม่เหมือนที่คิด</summary>
       ตรวจค่า <code>JOY_MODE</code> ในไฟล์ (ดู<a href="#s7">ขั้นตอนที่ 7.3</a>) เช่น แบบ <code>TANK</code> ต้องดันจอยทั้งสองข้างขึ้นพร้อมกันถึงจะเดินหน้าตรง</details>
+    <details><summary>หุ่น 4WD มีแค่ 2 ล้อที่หมุน</summary>
+      ตั้ง <code>DRIVE_TYPE</code> เป็น <code>4</code> แล้วอัปโหลดใหม่ (ดู<a href="#s6">ขั้นตอนที่ 6</a>)</details>
     <details><summary>หุ่นขยับเองตอนปล่อยจอย</summary>
       เพิ่มค่า <code>DEADZONE</code> (ดู<a href="#s7">ขั้นตอนที่ 7.2</a>)</details>
   </section>
