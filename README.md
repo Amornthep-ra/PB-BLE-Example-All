@@ -14,6 +14,7 @@
 |---|---|---|---|---|
 | PicoMini | ESP32-C3 | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/PicoMini/) | [`PicoMini/`](PicoMini) |
 | NKP_ONE | ESP32 | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_ONE/) | [`NKP_ONE/`](NKP_ONE) |
+| NKP_V2 | ESP32 | 4BTN · 8BTN · Joystick | [เปิดคู่มือ](https://amornthep-ra.github.io/PB-BLE-Example-All/NKP_V2/) | [`NKP_V2/`](NKP_V2) |
 
 ## โครงสร้าง
 
@@ -26,7 +27,8 @@ PB-BLE-Example-All/
 │   ├── PB_4BTN_Control/
 │   ├── PB_8BTN_Control/
 │   └── PB_Joystick_Control/
-└── NKP_ONE/            ← โครงสร้างเดียวกับ PicoMini (ใช้ NKP_Motor_drive.h)
+├── NKP_ONE/            ← โครงสร้างเดียวกับ PicoMini (ใช้ NKP_Motor_drive.h)
+└── NKP_V2/             ← โครงสร้างเดียวกับ PicoMini (ใช้ NKP_V2Motor_drive.h)
 ```
 
 ### เพิ่มบอร์ดใหม่
