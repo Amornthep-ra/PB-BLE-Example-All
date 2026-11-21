@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PB-BLE บอร์ดของคุณเอง</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface2:#eef1f5; --text:#1b2330; --muted:#5b6676;
+  --line:#dde2e9; --accent:#1f6feb; --accent-soft:#e3eeff; --ok:#1a7f37; --ok-soft:#e5f5ea;
+  --warn:#9a6700; --warn-soft:#fff6d9; --bad:#c62828; --bad-soft:#fdecec;
+  --code-bg:#0f1720; --code-text:#e6edf3; --code-key:#7ee787; --code-str:#a5d6ff; --code-com:#8b949e; --code-num:#ffa657;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --surface:#161b22; --surface2:#1f2630; --text:#e6edf3; --muted:#9aa5b1;
+    --line:#2d3540; --accent:#58a6ff; --accent-soft:#132a4a; --ok:#3fb950; --ok-soft:#12291a;
+    --warn:#d29922; --warn-soft:#2b2311; --bad:#f85149; --bad-soft:#341617;
+    --code-bg:#0a0e14;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --surface:#161b22; --surface2:#1f2630; --text:#e6edf3; --muted:#9aa5b1;
+  --line:#2d3540; --accent:#58a6ff; --accent-soft:#132a4a; --ok:#3fb950; --ok-soft:#12291a;
+  --warn:#d29922; --warn-soft:#2b2311; --bad:#f85149; --bad-soft:#341617;
+  --code-bg:#0a0e14;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Leelawadee UI","Sarabun","Noto Sans Thai","Tahoma",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.7}
+code,pre,kbd{font-family:"Cascadia Code",Consolas,"SF Mono",Menlo,monospace}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+header.hero{background:linear-gradient(135deg,#1f6feb,#0b3d91);color:#fff;padding:40px 0 32px}
+header.hero h1{margin:0 0 6px;font-size:clamp(26px,5vw,38px);line-height:1.25}
+header.hero p{margin:0;opacity:.9;max-width:680px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.hero-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.hbtn{display:inline-block;padding:8px 16px;border-radius:10px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1px solid rgba(255,255,255,.4)}
+.hbtn:hover{background:rgba(255,255,255,.12)}
+.hbtn.primary{background:#fff;color:#0b3d91;border-color:#fff}
+.hbtn.primary:hover{background:#e8efff}
+.linkbox .dl{display:inline-block;margin:10px 0 6px;padding:10px 20px;border-radius:10px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700}
+.chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:3px 12px;font-size:14px}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:32px;padding:28px 16px 64px}
+nav.toc{position:sticky;top:16px;align-self:start;font-size:14px}
+nav.toc b{display:block;color:var(--muted);font-weight:600;margin-bottom:6px;font-size:13px;letter-spacing:.03em}
+nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:t}
+nav.toc li{counter-increment:t}
+nav.toc a{display:block;padding:5px 10px;border-radius:8px;color:var(--text);text-decoration:none}
+nav.toc a::before{content:counter(t) ". ";color:var(--muted)}
+nav.toc a:hover{background:var(--surface2)}
+main{min-width:0}
+section.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin-bottom:20px;scroll-margin-top:16px}
+section.step h2{display:flex;align-items:center;gap:12px;margin:0 0 12px;font-size:22px;line-height:1.3}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:16px;font-weight:700}
+h3{font-size:17px;margin:20px 0 8px}
+ol.steps{padding-left:22px;margin:8px 0}
+ol.steps li{margin:6px 0}
+.menu{display:inline-block;background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:0 7px;font-size:14px;font-weight:600;white-space:nowrap}
+kbd{background:var(--surface2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:13px}
+code{background:var(--surface2);border-radius:5px;padding:1px 5px;font-size:.9em;word-break:break-word}
+.codebox{position:relative;margin:10px 0 14px}
+pre{margin:0;background:var(--code-bg);color:var(--code-text);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:14px;line-height:1.6}
+pre code{background:none;padding:0;font-size:inherit;word-break:normal}
+.k{color:var(--code-key)} .s{color:var(--code-str)} .c{color:var(--code-com)} .n{color:var(--code-num)}
+.copy{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);color:#e6edf3;border:1px solid rgba(255,255,255,.2);border-radius:6px;font:inherit;font-size:12px;padding:2px 10px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.2)}
+.note{border-radius:10px;padding:12px 14px;margin:12px 0;border:1px solid;font-size:15px}
+.note b:first-child{display:block;margin-bottom:2px}
+.info{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.ok{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.bad{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.linkbox{border:2px dashed var(--accent);border-radius:12px;padding:16px;text-align:center;background:var(--accent-soft);margin:12px 0}
+.linkbox .big{font-size:18px;font-weight:700}
+.tbl{overflow-x:auto;margin:10px 0 14px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--surface2);font-weight:600;white-space:nowrap}
+td:first-child code{white-space:nowrap;word-break:normal}
+tr:last-child td{border-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface)}
+.card h4{margin:0 0 6px;font-size:16px}
+figure{margin:14px 0;text-align:center}
+figure svg{max-width:100%;height:auto}
+figcaption{color:var(--muted);font-size:13px;margin-top:4px}
+.tree{background:var(--surface2);border-radius:10px;padding:12px 16px;font-family:"Cascadia Code",Consolas,monospace;font-size:14px;line-height:1.6;overflow-x:auto;white-space:pre}
+.check{list-style:none;padding:0;margin:8px 0}
+.check li{padding-left:28px;position:relative;margin:6px 0}
+.check li::before{content:"";position:absolute;left:2px;top:6px;width:16px;height:16px;border-radius:4px;border:2px solid var(--ok)}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;background:var(--surface)}
+details summary{cursor:pointer;font-weight:600}
+details[open] summary{margin-bottom:6px}
+.svg-t{fill:var(--text)} .svg-m{fill:var(--muted)} .svg-line{stroke:var(--line)} .svg-surf{fill:var(--surface2)}
+.svg-acc{fill:var(--accent)} .svg-acc-s{stroke:var(--accent)} .svg-ok{fill:var(--ok)}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
+@media (max-width:820px){
+  .layout{grid-template-columns:1fr;gap:16px;padding-top:16px}
+  nav.toc{position:static;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .grid2{grid-template-columns:1fr}
+  section.step{padding:18px 14px 14px}
+}
+@media print{
+  nav.toc,.copy{display:none}
+  .layout{grid-template-columns:1fr}
+  section.step{break-inside:avoid-page}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>ใช้ PB-BLE กับบอร์ดของคุณเอง<br><span style="opacity:.85;font-size:.7em">Custom Board (ESP32 / ESP32-C3)</span></h1>
+    <p>บอร์ดของคุณไม่อยู่ในรายการ? คู่มือนี้บอกว่าต้องใช้ไฟล์ไหน แก้ตรงไหน และต่อมอเตอร์อย่างไร เพื่อบังคับหุ่นด้วยแอป PB Controller</p>
+    <div class="chips">
+      <span class="chip">ESP32 / ESP32-C3</span>
+      <span class="chip">แก้แค่ไฟล์ PB_Board.h</span>
+      <span class="chip">2WD / 4WD</span>
+      <span class="chip">โหมด 4BTN · 8BTN · Joystick</span>
+    </div>
+    <div class="hero-links">
+      <a class="hbtn primary" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/archive/refs/heads/main.zip">⬇ ดาวน์โหลดโค้ด (.zip)</a>
+      <a class="hbtn" href="https://github.com/Amornthep-ra/PB-BLE/releases/latest/download/PB-BLE.zip">⬇ Lib PB-BLE (.zip)</a>
+      <a class="hbtn" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/Custom_Board" target="_blank" rel="noopener">GitHub</a>
+      <a class="hbtn" href="../">← ทุกบอร์ด</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="toc" aria-label="สารบัญ">
+    <b>สารบัญ</b>
+    <ol>
+      <li><a href="#s1">ก่อนเริ่ม</a></li>
+      <li><a href="#s2">ติดตั้งโปรแกรมและ Lib</a></li>
+      <li><a href="#s3">ไฟล์ที่ต้องใช้</a></li>
+      <li><a href="#s4">ดูชนิดไดรเวอร์มอเตอร์</a></li>
+      <li><a href="#s5">ใส่หมายเลขขา</a></li>
+      <li><a href="#s6">2WD / 4WD</a></li>
+      <li><a href="#s7">อัปโหลดและทดสอบทิศทาง</a></li>
+      <li><a href="#s8">ปรับความเร็วและใช้งานแอป</a></li>
+      <li><a href="#s9">ขั้นสูง: ไดรเวอร์แบบอื่น</a></li>
+      <li><a href="#s10">แก้ปัญหาที่พบบ่อย</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <section class="step" id="s1">
+    <h2><span class="num">1</span>ก่อนเริ่ม</h2>
+    <ul class="check">
+      <li>บอร์ดต้องใช้ชิป <b>ESP32</b> หรือ <b>ESP32-C3</b> (PB-BLE ยังไม่รองรับ ESP32-S2/S3, Arduino UNO, Nano, RP2040 ฯลฯ)</li>
+      <li>รู้ว่าบอร์ดหรือหุ่นใช้<b>ชิปไดรเวอร์มอเตอร์</b>รุ่นไหน และมอเตอร์ต่อกับ GPIO ขาไหน (ดูจาก schematic หรือเอกสารของบอร์ด)</li>
+      <li>มือถือที่ติดตั้งแอป <b>PB Controller</b></li>
+    </ul>
+    <div class="note info">
+      <b>ถ้าบอร์ดของคุณมีในรายการ ให้ใช้โฟลเดอร์ของบอร์ดนั้นแทน</b>
+      <a href="../PicoMini/">PicoMini</a> · <a href="../NKP_ONE/">NKP_ONE</a> · <a href="../NKP_V2/">NKP_V2</a> · <a href="../ESPRobotV2/">ESPRobotV2</a> เพราะตั้งค่าขามอเตอร์ไว้ให้แล้ว
+    </div>
+  </section>
+
+  <section class="step" id="s2">
+    <h2><span class="num">2</span>ติดตั้งโปรแกรมและ Lib</h2>
+    <ol class="steps">
+      <li>ติดตั้ง <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">Arduino IDE 2.x</a></li>
+      <li>ติดตั้งบอร์ด <b>esp32 by Espressif Systems เวอร์ชัน 3.3.11</b> ผ่าน <span class="menu">Tools › Board › Boards Manager…</span></li>
+      <li>ดาวน์โหลด Lib <a href="https://github.com/Amornthep-ra/PB-BLE/releases/latest/download/PB-BLE.zip"><b>PB-BLE.zip</b></a> แล้วติดตั้งด้วย <span class="menu">Sketch › Include Library › Add .ZIP Library…</span></li>
+      <li>ดาวน์โหลด <a href="https://github.com/Amornthep-ra/PB-BLE-Example-All/archive/refs/heads/main.zip">โค้ดตัวอย่าง (.zip)</a> แล้ว<b>แตกไฟล์</b></li>
+    </ol>
+    <div class="note bad"><b>ห้ามใช้ esp32 core เวอร์ชัน 4.x</b>จะ compile ไม่ผ่าน (<code>BLEDevice.h: No such file or directory</code>)</div>
+    <p style="color:var(--muted);font-size:14px">ขั้นตอนพร้อมรูปแบบละเอียด ดูได้ใน<a href="../PicoMini/#s2">คู่มือ PicoMini ขั้นตอนที่ 2–4</a> (ทำเหมือนกันทุกบอร์ด)</p>
+  </section>
+
+  <section class="step" id="s3">
+    <h2><span class="num">3</span>ไฟล์ที่ต้องใช้</h2>
+    <p>หลังแตก zip ให้เข้าโฟลเดอร์ <b><code>Custom_Board</code></b> เลือกโปรแกรมตามโหมดที่จะใช้ในแอป</p>
+    <div class="tree">PB-BLE-Example-All-main/
+└── Custom_Board/                      ← ใช้โฟลเดอร์นี้
+    ├── PB_4BTN_Control/
+    │   ├── PB_4BTN_Control.ino        ← โหมด 4BTN (Lo / Med / Hi)
+    │   └── PB_Board.h                 ← ★ ตั้งค่ามอเตอร์ของบอร์ดคุณ
+    ├── PB_8BTN_Control/
+    │   ├── PB_8BTN_Control.ino        ← โหมด 8BTN (DRV / TRN)
+    │   └── PB_Board.h
+    └── PB_Joystick_Control/
+        ├── PB_Joystick_Control.ino    ← โหมด Joystick (6 แบบ)
+        └── PB_Board.h</div>
+    <div class="tbl"><table>
+      <tr><th>ไฟล์</th><th>แก้อะไร</th></tr>
+      <tr><td><code>PB_Board.h</code></td><td><b>ชนิดไดรเวอร์มอเตอร์, หมายเลขขา GPIO, 2WD/4WD, กลับทิศล้อ</b> (ไฟล์เดียวที่ต้องแก้ให้ตรงกับบอร์ด)</td></tr>
+      <tr><td><code>.ino</code></td><td>ชื่อ BLE / Board ID / Pair Code และค่าความเร็ว เหมือนบอร์ดอื่น ๆ</td></tr>
+    </table></div>
+    <div class="note warn">
+      <b>แต่ละโฟลเดอร์มี PB_Board.h ของตัวเอง</b>
+      ให้แก้ไฟล์ในโฟลเดอร์ที่ใช้งาน ถ้าจะใช้หลายโหมด แก้ไฟล์แรกให้เสร็จแล้ว copy ไปทับในอีก 2 โฟลเดอร์ได้เลย ไฟล์นี้ต้องอยู่คู่กับ <code>.ino</code> เสมอ
+    </div>
+    <p>ใน Arduino IDE จะเห็น <code>PB_Board.h</code> เป็นแท็บที่ 2 ข้างไฟล์ <code>.ino</code> คลิกแท็บนั้นเพื่อแก้ได้เลย</p>
+  </section>
+
+  <section class="step" id="s4">
+    <h2><span class="num">4</span>ดูชนิดไดรเวอร์มอเตอร์</h2>
+    <p>ดูชื่อชิปบนบอร์ดหรือโมดูลไดรเวอร์ แล้วเลือกแบบที่ตรงกันจากตารางนี้</p>
+    <div class="tbl"><table>
+      <tr><th>MOTOR_DRIVER</th><th>ขาต่อมอเตอร์ 1 ตัว</th><th>ชิป / โมดูลที่พบบ่อย</th></tr>
+      <tr><td><code>1</code> <code>DRIVER_IN1_IN2</code></td><td><b>2 ขา PWM:</b> IN1, IN2</td><td>DRV8833, L9110S, MX1508, TB6612 (ต่อ PWM ที่ IN1/IN2 และต่อ PWMA เป็น HIGH)</td></tr>
+      <tr><td><code>2</code> <code>DRIVER_DIR_PWM</code></td><td><b>1 ขาทิศ + 1 ขา PWM:</b> DIR (PH), PWM (EN)</td><td>DRV8835 (โหมด PH/EN), บอร์ดหุ่นยนต์หลายรุ่น เช่น PicoMini</td></tr>
+      <tr><td><code>3</code> <code>DRIVER_IN1_IN2_EN</code></td><td><b>2 ขาทิศ + 1 ขา PWM:</b> IN1, IN2, EN</td><td>L298N (IN1, IN2, ENA), TB6612FNG (AIN1, AIN2, PWMA)</td></tr>
+    </table></div>
+    <figure>
+      <svg viewBox="0 0 560 170" role="img" aria-label="การต่อ ESP32 กับไดรเวอร์มอเตอร์">
+        <g font-size="13" text-anchor="middle">
+          <rect x="10" y="35" width="130" height="100" rx="12" class="svg-surf"/>
+          <text x="75" y="70" class="svg-t" font-weight="700">ESP32</text>
+          <text x="75" y="90" class="svg-m">GPIO ตาม</text>
+          <text x="75" y="108" class="svg-m">PB_Board.h</text>
+          <rect x="215" y="35" width="130" height="100" rx="12" class="svg-acc" opacity=".14"/>
+          <text x="280" y="80" class="svg-t" font-weight="700">ไดรเวอร์</text>
+          <text x="280" y="100" class="svg-m">มอเตอร์</text>
+          <rect x="420" y="20" width="130" height="50" rx="10" class="svg-ok" opacity=".18"/>
+          <text x="485" y="50" class="svg-t" font-weight="700">มอเตอร์ซ้าย</text>
+          <rect x="420" y="100" width="130" height="50" rx="10" class="svg-ok" opacity=".18"/>
+          <text x="485" y="130" class="svg-t" font-weight="700">มอเตอร์ขวา</text>
+          <g stroke-width="2" class="svg-acc-s" fill="none">
+            <path d="M140 65 H215"/><path d="M140 105 H215"/>
+            <path d="M345 60 C380 60 385 45 420 45"/><path d="M345 110 C380 110 385 125 420 125"/>
+          </g>
+          <text x="178" y="58" class="svg-m" font-size="11">LEFT_PINS</text>
+          <text x="178" y="98" class="svg-m" font-size="11">RIGHT_PINS</text>
+          <text x="280" y="160" class="svg-m" font-size="12">ต่อ GND ของ ESP32 กับไดรเวอร์ร่วมกันเสมอ · ไฟมอเตอร์มาจากแบตเตอรี่</text>
+        </g>
+      </svg>
+    </figure>
+  </section>
+
+  <section class="step" id="s5">
+    <h2><span class="num">5</span>ใส่หมายเลขขาใน PB_Board.h</h2>
+    <p>เปิดแท็บ <code>PB_Board.h</code> แก้ 2 ส่วนนี้ ใส่เลข GPIO แทน <code>-1</code></p>
+    <div class="codebox"><pre><code><span class="k">#define</span> MOTOR_DRIVER  DRIVER_IN1_IN2   <span class="c">// &lt;-- choose 1, 2 or 3</span>
+
+<span class="k">const int</span> LEFT_PINS[<span class="n">3</span>]   = { <span class="n">-1</span>, <span class="n">-1</span>, <span class="n">-1</span> };   <span class="c">// left motor</span>
+<span class="k">const int</span> RIGHT_PINS[<span class="n">3</span>]  = { <span class="n">-1</span>, <span class="n">-1</span>, <span class="n">-1</span> };   <span class="c">// right motor</span></code></pre><button class="copy" type="button">Copy</button></div>
+    <h3>ตัวอย่างตามชนิดไดรเวอร์</h3>
+    <div class="grid2">
+      <div class="card"><h4>แบบ 1: DRV8833 / L9110S</h4>
+        <div class="codebox" style="margin:6px 0 0"><pre><code><span class="k">#define</span> MOTOR_DRIVER DRIVER_IN1_IN2
+<span class="c">//                           IN1 IN2  -</span>
+<span class="k">const int</span> LEFT_PINS[<span class="n">3</span>]  = { <span class="n">25</span>, <span class="n">26</span>, <span class="n">-1</span> };
+<span class="k">const int</span> RIGHT_PINS[<span class="n">3</span>] = { <span class="n">27</span>, <span class="n">14</span>, <span class="n">-1</span> };</code></pre></div></div>
+      <div class="card"><h4>แบบ 2: DIR + PWM</h4>
+        <div class="codebox" style="margin:6px 0 0"><pre><code><span class="k">#define</span> MOTOR_DRIVER DRIVER_DIR_PWM
+<span class="c">//                           DIR PWM  -</span>
+<span class="k">const int</span> LEFT_PINS[<span class="n">3</span>]  = { <span class="n">21</span>, <span class="n">20</span>, <span class="n">-1</span> };
+<span class="k">const int</span> RIGHT_PINS[<span class="n">3</span>] = { <span class="n">10</span>, <span class="n">8</span>,  <span class="n">-1</span> };</code></pre></div></div>
+      <div class="card"><h4>แบบ 3: L298N</h4>
+        <div class="codebox" style="margin:6px 0 0"><pre><code><span class="k">#define</span> MOTOR_DRIVER DRIVER_IN1_IN2_EN
+<span class="c">//                           IN1 IN2 ENA</span>
+<span class="k">const int</span> LEFT_PINS[<span class="n">3</span>]  = { <span class="n">27</span>, <span class="n">26</span>, <span class="n">14</span> };
+<span class="k">const int</span> RIGHT_PINS[<span class="n">3</span>] = { <span class="n">25</span>, <span class="n">33</span>, <span class="n">32</span> };</code></pre></div></div>
+      <div class="card"><h4>แบบ 3: TB6612FNG</h4>
+        <div class="codebox" style="margin:6px 0 0"><pre><code><span class="k">#define</span> MOTOR_DRIVER DRIVER_IN1_IN2_EN
+<span class="c">//                           AIN1 AIN2 PWMA</span>
+<span class="k">const int</span> LEFT_PINS[<span class="n">3</span>]  = { <span class="n">27</span>, <span class="n">26</span>, <span class="n">14</span> };
+<span class="k">const int</span> RIGHT_PINS[<span class="n">3</span>] = { <span class="n">25</span>, <span class="n">33</span>, <span class="n">32</span> };
+<span class="k">const int</span> DRIVER_ENABLE_PIN = <span class="n">13</span>;  <span class="c">// STBY</span></code></pre></div></div>
+    </div>
+    <p style="color:var(--muted);font-size:14px">ตัวเลขในตัวอย่างเป็นแค่ตัวอย่างเท่านั้น ให้ใช้เลขขาที่ต่อจริงบนบอร์ดของคุณ</p>
+    <div class="tbl"><table>
+      <tr><th>ค่าอื่นใน PB_Board.h</th><th>ใช้เมื่อไร</th></tr>
+      <tr><td><code>DRIVER_ENABLE_PIN</code></td><td>ไดรเวอร์มีขาที่ต้องตั้งเป็น HIGH ถึงจะทำงาน เช่น STBY ของ TB6612 หรือขา Enable ของบอร์ด ถ้าไม่มีให้ใส่ <code>-1</code></td></tr>
+      <tr><td><code>INVERT_LEFT</code> / <code>INVERT_RIGHT</code></td><td>ล้อฝั่งนั้นหมุนกลับทิศ ให้ตั้งเป็น <code>true</code> (ดูขั้นตอนที่ 7)</td></tr>
+      <tr><td><code>PWM_FREQ</code></td><td>ค่าเริ่ม 1000 Hz ถ้ามอเตอร์มีเสียงหวีด ลองตั้ง 5000 หรือ 20000</td></tr>
+    </table></div>
+    <div class="note warn">
+      <b>ขาที่ไม่ควรใช้</b>
+      <b style="display:inline">ESP32:</b> GPIO 6–11 (ต่อกับหน่วยความจำ), 34–39 (รับสัญญาณเข้าได้อย่างเดียว), ระวังขา 0, 2, 12, 15 (มีผลตอนบูต)<br>
+      <b style="display:inline">ESP32-C3:</b> GPIO 12–17 (หน่วยความจำในโมดูลส่วนใหญ่), 18–19 (USB), ระวังขา 2, 8, 9 (มีผลตอนบูต)
+    </div>
+  </section>
+
+  <section class="step" id="s6">
+    <h2><span class="num">6</span>2WD / 4WD</h2>
+    <div class="tbl"><table>
+      <tr><th>หุ่นแบบ</th><th>ตั้งค่า</th></tr>
+      <tr><td><b>2WD</b> มอเตอร์ 2 ตัว</td><td><code>#define DRIVE_TYPE 2</code> ใส่ขาแค่ <code>LEFT_PINS</code>, <code>RIGHT_PINS</code></td></tr>
+      <tr><td><b>4WD</b> ไดรเวอร์แยก 4 ช่อง</td><td><code>#define DRIVE_TYPE 4</code> ใส่ขาเพิ่มใน <code>LEFT2_PINS</code> (หลังซ้าย), <code>RIGHT2_PINS</code> (หลังขวา) ล้อฝั่งเดียวกันจะหมุนพร้อมกัน<br><small>ESP32-C3 มี PWM แค่ 6 ช่อง ถ้าเป็นแบบ 1 แล้วต่อ 4WD (ต้องใช้ 8 ช่อง) จะไม่พอ ให้ใช้แบบ 2 หรือ 3 หรือต่อมอเตอร์ขนานกันแทน</small></td></tr>
+      <tr><td><b>4WD</b> แต่มอเตอร์ 2 ตัวต่อขนานกันในช่องเดียว</td><td>ใช้ <code>DRIVE_TYPE 2</code> เพราะในโค้ดเห็นเป็นแค่ 2 ช่อง</td></tr>
+    </table></div>
+  </section>
+
+  <section class="step" id="s7">
+    <h2><span class="num">7</span>อัปโหลดและทดสอบทิศทาง</h2>
+    <ol class="steps">
+      <li>แก้ชื่อ BLE / Board ID / Pair Code ใน <code>.ino</code> (กติกาเดียวกับ<a href="../PicoMini/#s6">คู่มือ PicoMini ขั้นตอนที่ 6</a>)</li>
+      <li>เลือกบอร์ดใน <span class="menu">Tools › Board</span> ให้ตรงกับชิป เช่น <b>ESP32 Dev Module</b> หรือ <b>ESP32C3 Dev Module</b> แล้วเลือก Port</li>
+      <li>ตั้ง <span class="menu">Tools › Partition Scheme</span> เป็น <b>Huge APP</b> (โค้ด Bluetooth มักใหญ่เกินค่าเริ่มต้น)</li>
+      <li>ถ้าเป็น ESP32-C3 ที่เสียบ USB เข้าชิปโดยตรง ให้ตั้ง <span class="menu">USB CDC On Boot</span> เป็น <b>Enabled</b></li>
+      <li>กด <b>Upload</b> แล้วเปิด Serial Monitor ที่ 115200 จะเห็นข้อความ <code>[PB_Board] driver type 1, 2WD</code></li>
+    </ol>
+    <div class="note warn"><b>ถ้าเห็น “WARNING: motor pins are not set”</b>แปลว่ายังไม่ได้ใส่ขาใน <code>PB_Board.h</code> หรือใส่ไม่ครบ มอเตอร์จะไม่หมุน (ตั้งใจให้เป็นแบบนี้ เพื่อกันไม่ให้โค้ดไปสั่งขาที่ไม่รู้จัก)</div>
+    <div class="note bad"><b>ยกล้อหุ่นให้ลอยก่อนทดสอบ</b>เชื่อมแอป เลือกโหมด 8BTN แล้วกด Start ลองกดปุ่มทีละปุ่ม แล้วแก้ตามตารางนี้</div>
+    <div class="tbl"><table>
+      <tr><th>อาการเมื่อกด</th><th>วิธีแก้ใน PB_Board.h</th></tr>
+      <tr><td>UP แล้วล้อซ้ายหมุนถอยหลัง</td><td><code>INVERT_LEFT = true</code></td></tr>
+      <tr><td>UP แล้วล้อขวาหมุนถอยหลัง</td><td><code>INVERT_RIGHT = true</code></td></tr>
+      <tr><td>UP แล้วถอยหลังทั้งคู่</td><td>ตั้ง <code>true</code> ทั้งสองค่า</td></tr>
+      <tr><td>LEFT แล้วหุ่นหมุนไปทางขวา</td><td>สลับค่าใน <code>LEFT_PINS</code> กับ <code>RIGHT_PINS</code></td></tr>
+      <tr><td>4WD: ล้อหลังหมุนสวนกับล้อหน้า</td><td>สลับลำดับ 2 ขาแรกใน <code>LEFT2_PINS</code> / <code>RIGHT2_PINS</code> ของล้อนั้น หรือสลับสายมอเตอร์</td></tr>
+    </table></div>
+  </section>
+
+  <section class="step" id="s8">
+    <h2><span class="num">8</span>ปรับความเร็วและใช้งานแอป</h2>
+    <p>ส่วนนี้เหมือนบอร์ดอื่นทุกอย่าง เพราะไฟล์ <code>.ino</code> เป็นตัวเดียวกัน</p>
+    <ul>
+      <li>ปรับความเร็ว 4BTN / 8BTN / Joystick (<code>DEADZONE</code>, <code>TURN_MAX</code>, <code>JOY_MODE</code> ฯลฯ): ดู<a href="../PicoMini/#s7">คู่มือ PicoMini ขั้นตอนที่ 7</a></li>
+      <li>เชื่อมต่อแอปและทดสอบ: ดู<a href="../PicoMini/#s9">คู่มือ PicoMini ขั้นตอนที่ 9</a></li>
+    </ul>
+  </section>
+
+  <section class="step" id="s9">
+    <h2><span class="num">9</span>ขั้นสูง: ไดรเวอร์แบบอื่น</h2>
+    <p>ถ้าบอร์ดสั่งมอเตอร์แบบที่ไม่อยู่ในตาราง เช่น ผ่านชิป I2C หรือใช้ Lib ของบอร์ดเอง ให้แก้ 3 ฟังก์ชันท้ายไฟล์ <code>PB_Board.h</code> ได้โดยตรง โดยไม่ต้องแก้ <code>.ino</code></p>
+    <div class="codebox"><pre><code><span class="k">void</span> boardMotorInit()               { <span class="c">/* ตั้งค่าขา / เริ่ม Lib มอเตอร์ */</span> }
+<span class="k">void</span> boardSetMotors(<span class="k">int</span> left, <span class="k">int</span> right) { <span class="c">/* สั่งฝั่งซ้าย/ขวา -100..100 */</span> }
+<span class="k">void</span> boardFailsafeStop()            { <span class="c">/* หยุดมอเตอร์ (ถูกเรียกจาก BLE task) */</span> }</code></pre><button class="copy" type="button">Copy</button></div>
+    <div class="note bad">
+      <b>กติกาของ boardFailsafeStop()</b>
+      ฟังก์ชันนี้ทำงานใน task ของ Bluetooth ตอนหลุดการเชื่อมต่อ ให้เขียนสั้น ๆ <b>ห้ามใช้ <code>delay</code>, <code>Serial</code>, I2C หรือคำสั่ง BLE</b> ถ้ามอเตอร์สั่งผ่าน I2C ให้ตั้ง flag ไว้แทน แล้วให้ <code>loop()</code> เป็นตัวสั่งหยุด
+    </div>
+    <p>ดูตัวอย่างของจริงได้จากโฟลเดอร์บอร์ดอื่น:</p>
+    <div class="tbl"><table>
+      <tr><th>ตัวอย่าง</th><th>รูปแบบ</th></tr>
+      <tr><td><a href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/NKP_V2" target="_blank" rel="noopener">NKP_V2</a></td><td>มอเตอร์ผ่าน I2C ตอนหยุดฉุกเฉินใช้ flag ให้ loop() สั่งหยุด และส่งคำสั่งซ้ำทุก 100 ms</td></tr>
+      <tr><td><a href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/ESPRobotV2" target="_blank" rel="noopener">ESPRobotV2</a></td><td>PWM 4 มอเตอร์ เลือก 2WD / 4WD</td></tr>
+      <tr><td><a href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/PicoMini" target="_blank" rel="noopener">PicoMini</a></td><td>DIR + PWM และมีขา Enable ของไดรเวอร์</td></tr>
+    </table></div>
+  </section>
+
+  <section class="step" id="s10">
+    <h2><span class="num">10</span>แก้ปัญหาที่พบบ่อย</h2>
+    <details><summary>เชื่อมแอปได้ แต่มอเตอร์ไม่หมุนเลย</summary>
+      ดู Serial Monitor ว่ามีคำเตือนเรื่องขาไหม เลือก <code>MOTOR_DRIVER</code> ถูกแบบไหม ใส่ <code>DRIVER_ENABLE_PIN</code> แล้วหรือยัง (TB6612 ต้องตั้ง STBY เป็น HIGH) ต่อ GND ร่วมกันหรือยัง และเปิดไฟมอเตอร์แล้วหรือยัง</details>
+    <details><summary>มอเตอร์หมุนทางเดียว กลับทิศไม่ได้</summary>
+      น่าจะเลือก <code>MOTOR_DRIVER</code> ผิดแบบ หรือลำดับขาในวงเล็บผิด ให้ดูตารางใน<a href="#s4">ขั้นตอนที่ 4</a></details>
+    <details><summary>มอเตอร์หมุนเองตอนเปิดเครื่อง</summary>
+      ขาที่ใช้อาจเป็นขาที่มีผลตอนบูต (strapping pin) ให้ย้ายไปขาอื่น (ดู<a href="#s5">ขั้นตอนที่ 5</a>)</details>
+    <details><summary>ESP32-C3: หลังเชื่อม Bluetooth แล้วมอเตอร์ไม่ทำงาน</summary>
+      โค้ดเรียก <code>boardMotorInit()</code> ซ้ำหลังเริ่ม BLE ไว้ให้แล้ว ถ้ายังไม่ทำงาน ให้ตรวจว่าใช้ขา PWM เกินจำนวนช่องที่ชิปมีหรือไม่ (ESP32-C3 มี PWM 6 ช่อง)</details>
+    <details><summary><code>BLEDevice.h: No such file or directory</code></summary>
+      ใช้ esp32 core 4.x อยู่ ให้เปลี่ยนเป็น <b>3.3.11</b></details>
+    <details><summary><code>PB_Board.h: No such file or directory</code></summary>
+      ไฟล์ <code>PB_Board.h</code> ไม่ได้อยู่ในโฟลเดอร์เดียวกับ <code>.ino</code></details>
+  </section>
+
+  </main>
+</div>
+
+<footer>PB-BLE · Custom Board (ESP32 / ESP32-C3) · Arduino ESP32 Core 3.3.11<br>
+  <a href="../">ทุกบอร์ด</a> ·
+  <a href="https://github.com/Amornthep-ra/PB-BLE/releases/latest/download/PB-BLE.zip">Lib PB-BLE</a> ·
+  <a href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/Custom_Board">GitHub</a></footer>
+
+<script>
+document.querySelectorAll('.codebox').forEach(function(box){
+  var btn = box.querySelector('.copy');
+  btn.addEventListener('click', function(){
+    var text = box.querySelector('code').innerText;
+    function done(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy'; }, 1500); }
+    function fallback(){
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+    try {
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback);
+      else fallback();
+    } catch(e) { fallback(); }
+  });
+});
+</script>
+</body>
+</html>

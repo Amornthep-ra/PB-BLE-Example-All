@@ -33,6 +33,7 @@ header p{margin:0;opacity:.9;max-width:640px}
 .hbtn{display:inline-block;padding:8px 16px;border-radius:10px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1px solid rgba(255,255,255,.4)}
 .hbtn:hover{background:rgba(255,255,255,.12)}
 .hbtn.primary{background:#fff;color:#0b3d91;border-color:#fff}
+.hbtn.primary:hover{background:#e8efff}
 main{padding:28px 16px 56px}
 h2{font-size:20px;margin:0 0 14px}
 .boards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
@@ -44,6 +45,7 @@ h2{font-size:20px;margin:0 0 14px}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
 .btn{display:inline-block;padding:7px 14px;border-radius:9px;text-decoration:none;font-weight:600;font-size:14px;border:1px solid var(--line);color:var(--text);background:var(--surface2)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.board.custom{border-style:dashed}
 .board.soon{border-style:dashed;background:transparent;justify-content:center;align-items:center;text-align:center;min-height:200px;color:var(--muted)}
 .note{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:15px}
 .note b{display:block;margin-bottom:4px}
@@ -58,7 +60,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
     <div class="hlinks">
       <a class="hbtn primary" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/archive/refs/heads/main.zip">⬇ ดาวน์โหลดโค้ดทั้งหมด (.zip)</a>
       <a class="hbtn" href="https://github.com/Amornthep-ra/PB-BLE-Example-All" target="_blank" rel="noopener">GitHub</a>
-      <a class="hbtn" href="https://github.com/Amornthep-ra/PB-BLE" target="_blank" rel="noopener">Lib PB-BLE</a>
+      <a class="hbtn primary" href="https://github.com/Amornthep-ra/PB-BLE/releases/latest/download/PB-BLE.zip">⬇ Lib PB-BLE (.zip)</a>
     </div>
   </div>
 </header>
@@ -122,14 +124,25 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:0 16px 40px}
         <a class="btn" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/ESPRobotV2" target="_blank" rel="noopener">ดูโค้ด</a>
       </div>
     </article>
-    <div class="board soon">
-      <div><b style="color:var(--text)">บอร์ดอื่น ๆ</b><br>เร็ว ๆ นี้</div>
-    </div>
+    <article class="board custom">
+      <h3>🛠 บอร์ดของคุณเอง</h3>
+      <span class="chip">ESP32 / ESP32-C3 · 2WD / 4WD</span>
+      <p>บอร์ดไม่อยู่ในรายการ? ใช้โฟลเดอร์ <code>Custom_Board</code> แล้วแก้แค่ไฟล์ <code>PB_Board.h</code></p>
+      <ul>
+        <li>เลือกชนิดไดรเวอร์: IN1/IN2, DIR+PWM, L298N / TB6612</li>
+        <li>ใส่หมายเลข GPIO ของมอเตอร์</li>
+        <li>รองรับ 2WD / 4WD และกลับทิศล้อได้</li>
+      </ul>
+      <div class="actions">
+        <a class="btn primary" href="Custom_Board/">📖 เปิดคู่มือ</a>
+        <a class="btn" href="https://github.com/Amornthep-ra/PB-BLE-Example-All/tree/main/Custom_Board" target="_blank" rel="noopener">ดูโค้ด</a>
+      </div>
+    </article>
   </div>
 
   <div class="note">
     <b>วิธีใช้</b>
-    ดาวน์โหลด zip แล้ว<b style="display:inline">แตกไฟล์ก่อน</b> จากนั้นเข้าโฟลเดอร์ของบอร์ดที่ใช้ (เช่น <code>PicoMini</code>) แล้วทำตามคู่มือของบอร์ดนั้น
+    ติดตั้ง <a href="https://github.com/Amornthep-ra/PB-BLE/releases/latest/download/PB-BLE.zip">Lib PB-BLE.zip</a> ด้วย <i>Sketch › Include Library › Add .ZIP Library…</i> (ไม่ต้องแตกไฟล์) จากนั้นดาวน์โหลดโค้ดตัวอย่าง แล้ว<b style="display:inline">แตกไฟล์ก่อน</b> จากนั้นเข้าโฟลเดอร์ของบอร์ดที่ใช้ (เช่น <code>PicoMini</code>) แล้วทำตามคู่มือของบอร์ดนั้น
   </div>
 </main>
 

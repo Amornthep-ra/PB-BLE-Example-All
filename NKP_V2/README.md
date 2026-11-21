@@ -38,7 +38,7 @@
 
 - Arduino IDE 2.x
 - **esp32 by Espressif Systems เวอร์ชัน 3.3.11** (ห้ามใช้ 4.x เพราะ compile ไม่ผ่าน)
-- ไลบรารี [PB-BLE](https://github.com/Amornthep-ra/PB-BLE/releases/latest)
+- ไลบรารี PB-BLE: [ดาวน์โหลด PB-BLE.zip](https://github.com/Amornthep-ra/PB-BLE/releases/latest/download/PB-BLE.zip) แล้วติดตั้งด้วย **Sketch › Include Library › Add .ZIP Library…** (ไม่ต้องแตกไฟล์)
 - บอร์ด: **ESP32 Dev Module**
 - Partition Scheme: **Huge APP (3MB No OTA/1MB SPIFFS)**
 
